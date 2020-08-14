@@ -1,26 +1,66 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import ToDoList from './components/ToDoList';
+import NewItem from './components/NewItem';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+const mockTodos = [
+  {
+    id: 1,
+    name: 'Item 1',
+    done: false
+  },
+  {
+    id: 2,
+    name: 'Item 2',
+    done: true
+  }
+];
+
+let idCounter = 3;
+
+class App extends React.Component {
+
+  state = {
+    items: mockTodos
+  }
+
+  render() {
+    return (
+      <main>
+        <NewItem onAdd={this.handleAddition} />
+        <ToDoList items={this.state.items} onDelete={this.handleDelete} onToggle={this.handleToggle} />
+      </main>
+    );
+  }
+
+  handleAddition = name => {
+    this.setState({
+      items: [
+        {
+          id: idCounter++,
+          name,
+          done: false
+        },
+        ...this.state.items
+      ]
+    })
+  }
+
+  handleDelete = id => {
+    this.setState({
+      items: this.state.items.filter(item => item.id !== id)
+    });
+  }
+
+  handleToggle = id => {
+    const updatedItems = this.state.items.map(item => ({
+      id: item.id,
+      name: item.name,
+      done: item.id === id ? !item.done : item.done
+    }));
+    this.setState({
+      items: updatedItems
+    });
+  }
 }
 
 export default App;
