@@ -1,63 +1,64 @@
-import React from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import ToDoList from './components/ToDoList';
 import NewItem from './components/NewItem';
 import MouseCoordinates from './components/MouseCoordinates';
 
 let idCounter = 3;
 
-class App extends React.Component {
+function App() {
+  const [items, setItems] = useState([]);
 
-  state = {
-    items: []
-  }
+  useEffect(() => {
+    const loadItems = async () => {
+      const response = await fetch('/api/todos');
+      const todos = await response.json();
+      setItems(todos); 
+    };
 
-  render() {
-    return (
-      <main>
-        <MouseCoordinates />
-        <NewItem onAdd={this.handleAddition} />
-        <ToDoList items={this.state.items} onDelete={this.handleDelete} onToggle={this.handleToggle} />
-      </main>
-    );
-  }
+    loadItems();
+  }, [setItems]);
 
-  async componentDidMount() {
-    const response = await fetch('/api/todos');
-    const todos = await response.json();
-    this.setState({
-      items: todos
-    });
-  }
+  useEffect(() => {
+    console.log(`Items count: ${items.length}`);
+    return () => console.log(`Destructor: ${items.length}`);
+  }, [items]);
 
-  handleAddition = name => {
-    this.setState({
-      items: [
-        {
-          id: idCounter++,
-          name,
-          done: false
-        },
-        ...this.state.items
-      ]
-    })
-  }
+  const handleAddition = name => {
+    setItems(items => [
+      {
+        id: idCounter++,
+        name,
+        done: false
+      },
+      ...items
+    ]);
+  };
 
-  handleDelete = id => {
-    this.setState({
-      items: this.state.items.filter(item => item.id !== id)
-    });
-  }
+  const handleDelete = useCallback(id => {
+    setItems(items => items.filter(item => item.id !== id));
+  }, [setItems]);
 
-  handleToggle = id => {
-    const updatedItems = this.state.items.map(item => ({
+  const handleToggle = useCallback(id => {
+    setItems(items => items.map(item => ({
       id: item.id,
       name: item.name,
       done: item.id === id ? !item.done : item.done
-    }));
-    this.setState({
-      items: updatedItems
-    });
-  }
+    })));
+  }, [setItems]);
+
+  const nonCompletedItemsCount = useMemo(
+    () => items.filter(item => !item.done).length,
+    [items]
+  );
+
+  return (
+    <main>
+      <span>Count: {nonCompletedItemsCount}</span>
+      <MouseCoordinates />
+      <NewItem onAdd={handleAddition} />
+      <ToDoList items={items} onDelete={handleDelete} onToggle={handleToggle} />
+    </main>
+  );
 }
 
 export default App;

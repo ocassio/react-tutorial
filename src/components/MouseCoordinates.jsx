@@ -1,36 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
+import { useWindowEvent } from "../hooks/use-window-event.hook";
 
-class MouseCoordinates extends React.Component {
+function MouseCoordinates() {
+    const [{ x, y }, setCoords] = useState({ x: 0, y: 0 });
 
-    state = {
-        x: 0,
-        y: 0
-    }
+    useWindowEvent(
+        'mousemove',
+        e => setCoords({ x: e.x, y: e.y }),
+        [setCoords]
+    );
 
-    render() {
-        const { x, y } = this.state;
-        return (
-            <div>
-                {x}:{y}
-            </div>
-        );
-    }
-
-    componentDidMount() {
-        window.addEventListener('mousemove', this.handleMouseMove);
-    }
-
-    componentWillUnmount() {
-        window.removeEventListener('mousemove', this.handleMouseMove);
-    }
-
-    handleMouseMove = (e) => {
-        this.setState({
-            x: e.x,
-            y: e.y
-        });
-    }
-
+    return (
+        <div>
+            {x}:{y}
+        </div>
+    );
 }
 
 export default MouseCoordinates;

@@ -26,4 +26,4 @@ function ToDoList({ items, onDelete, onToggle }) {
     );
 }
 
-export default ToDoList;
+export default React.memo(ToDoList);

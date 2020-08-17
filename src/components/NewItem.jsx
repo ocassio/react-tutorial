@@ -1,36 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
 
-class NewItem extends React.Component {
+function NewItem({ onAdd }) {
+    const [name, setName] = useState('');
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            name: ''
-        };
-    }
-    
-    render() {
-        const { name } = this.state;
-        return (
-            <form style={{ display: "flex" }}>
-                <input type="text" value={name} onChange={this.handleChange} />
-                <button type="button" onClick={this.handleAddition} disabled={!name.trim()}>Add</button>
-            </form>
-        );
+    const handleChange = e => setName(e.target.value);
+    const handleAddition = () => {
+        onAdd(name);
+        setName('');
     }
 
-    handleChange = (e) => {
-        this.setState({
-            name: e.target.value
-        })
-    }
-
-    handleAddition = () => {
-        this.props.onAdd(this.state.name);
-        this.setState({
-            name: ''
-        });
-    }
+    return (
+        <form style={{ display: "flex" }}>
+            <input type="text" value={name} onChange={handleChange} />
+            <button type="button" onClick={handleAddition} disabled={!name.trim()}>Add</button>
+        </form>
+    );
 }
 
 export default NewItem;
