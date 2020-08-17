@@ -1,35 +1,32 @@
 import React from 'react';
 import ToDoList from './components/ToDoList';
 import NewItem from './components/NewItem';
-
-const mockTodos = [
-  {
-    id: 1,
-    name: 'Item 1',
-    done: false
-  },
-  {
-    id: 2,
-    name: 'Item 2',
-    done: true
-  }
-];
+import MouseCoordinates from './components/MouseCoordinates';
 
 let idCounter = 3;
 
 class App extends React.Component {
 
   state = {
-    items: mockTodos
+    items: []
   }
 
   render() {
     return (
       <main>
+        <MouseCoordinates />
         <NewItem onAdd={this.handleAddition} />
         <ToDoList items={this.state.items} onDelete={this.handleDelete} onToggle={this.handleToggle} />
       </main>
     );
+  }
+
+  async componentDidMount() {
+    const response = await fetch('/api/todos');
+    const todos = await response.json();
+    this.setState({
+      items: todos
+    });
   }
 
   handleAddition = name => {
