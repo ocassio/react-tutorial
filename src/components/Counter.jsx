@@ -1,8 +1,9 @@
 import React from "react";
 import { useSelector } from "react-redux";
+import { selectNonCompletedTodosCount } from "../store/todos/todos.slice";
 
 function Counter() {
-    const itemsCount = useSelector(store => store.todos.items.length);
+    const itemsCount = useSelector(selectNonCompletedTodosCount);
 
     return (
         <div>Items count: {itemsCount}</div>

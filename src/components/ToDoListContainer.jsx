@@ -1,28 +1,22 @@
 import React, { useEffect, useCallback } from "react";
 import ToDoList from "./ToDoList";
-import { loadTodos } from '../store';
 import { useSelector, useDispatch } from 'react-redux';
+import { selectTodos, deleteTodo, toggleTodo, loadTodos } from "../store/todos/todos.slice";
 
 function ToDoListContainer() {
     const dispatch = useDispatch();
-    const items = useSelector(store => store.todos.items);
+    const items = useSelector(selectTodos);
   
     useEffect(() => {
       dispatch(loadTodos());
     }, [dispatch]);
   
     const handleDelete = useCallback(id => {
-      dispatch({
-        type: 'deleteTodo',
-        payload: id
-      });
+      dispatch(deleteTodo(id));
     }, [dispatch]);
   
     const handleToggle = useCallback(id => {
-      dispatch({
-        type: 'toggleTodo',
-        payload: id
-      });
+      dispatch(toggleTodo(id));
     }, [dispatch]);
 
     return <ToDoList items={items} onToggle={handleToggle} onDelete={handleDelete} />;
